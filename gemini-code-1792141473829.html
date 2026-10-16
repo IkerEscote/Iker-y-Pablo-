@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>El Viaje Secreto de una Dirección Web - Proyecto DNS</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-light: #818cf8;
+            --secondary: #06b6d4;
+            --accent: #f59e0b;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --bg-card: #ffffff;
+            --border: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 0;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 3rem 1rem;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.4rem 1rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            margin-top: 1rem;
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+
+        section {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border: 1px solid var(--border);
+        }
+
+        h2 {
+            color: var(--primary);
+            margin-bottom: 1.2rem;
+            font-size: 1.8rem;
+            border-bottom: 3px solid var(--primary-light);
+            padding-bottom: 0.5rem;
+            display: inline-block;
+        }
+
+        h3 {
+            color: var(--secondary);
+            margin: 1.5rem 0 0.8rem 0;
+            font-size: 1.3rem;
+        }
+
+        p, li {
+            margin-bottom: 1rem;
+            font-size: 1.05rem;
+        }
+
+        ul, ol {
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .question-box {
+            background: #eff6ff;
+            border-left: 5px solid var(--primary);
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.5rem 0;
+            font-size: 1.2rem;
+            font-style: italic;
+            color: #1e3a8a;
+        }
+
+        /* Grid para las 6 claves */
+        .grid-claves {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .card-clave {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card-clave:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+            border-color: var(--primary-light);
+        }
+
+        .card-clave h4 {
+            color: var(--primary);
+            margin-bottom: 0.8rem;
+            font-size: 1.2rem;
+        }
+
+        /* Simulador interactivo DNS */
+        .simulator-box {
+            background: #0f172a;
+            color: #f8fafc;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .simulator-box h3 {
+            color: #38bdf8;
+            margin-bottom: 1rem;
+        }
+
+        .sim-input-group {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .sim-input-group input {
+            padding: 0.8rem 1rem;
+            font-size: 1rem;
+            border-radius: 6px;
+            border: none;
+            width: 300px;
+            max-width: 100%;
+        }
+
+        .sim-input-group button {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+
+        .sim-input-group button:hover {
+            background: #0891b2;
+        }
+
+        #sim-steps {
+            text-align: left;
+            background: #1e293b;
+            padding: 1.5rem;
+            border-radius: 8px;
+            min-height: 120px;
+            font-family: monospace;
+            font-size: 0.95rem;
+            border: 1px solid #334155;
+        }
+
+        .step-item {
+            margin-bottom: 0.6rem;
+            opacity: 0;
+            animation: fadeIn 0.5s forwards;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        /* Tabla de investigación */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+        }
+
+        th, td {
+            border: 1px solid var(--border);
+            padding: 1rem;
+            text-align: left;
+        }
+
+        th {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            background: var(--dark);
+            color: white;
+            margin-top: 3rem;
+        }
+
+        @media (max-width: 768px) {
+            header h1 { font-size: 1.8rem; }
+            section { padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>El Viaje Secreto de una Dirección Web</h1>
+        <p>Proyecto Educativo en Parejas · Tecnología y Digitalización · 4º ESO</p>
+        <div class="badge">🌐 DNS & GitHub Pages</div>
+    </header>
+
+    <div class="container">
+        
+        <!-- Misión -->
+        <section>
+            <h2>🎯 Nuestra Misión</h2>
+            <p>En este proyecto explicamos de forma visual, clara y redactada íntegramente con nuestras propias palabras cómo funciona la infraestructura invisible de internet. Queremos resolver la gran duda que surge cada vez que navegamos:</p>
+            
+            <div class="question-box">
+                "¿Qué ocurre exactamente desde que escribo una dirección web en mi navegador hasta que mi ordenador encuentra su dirección IP y carga la página?"
+            </div>
+            
+            <p>A continuación desarrollamos los puntos clave que explican este fascinante recorrido paso a paso.</p>
+        </section>
+
+        <!-- Las 6 Claves del DNS -->
+        <section>
+            <h2>📚 Las 6 Claves del Viaje DNS</h2>
+            
+            <div class="grid-claves">
+                
+                <div class="card-clave">
+                    <h4>1. ¿Qué es el DNS y para qué sirve?</h4>
+                    <p>El <strong>DNS</strong> (<i>Domain Name System</i> o Sistema de Nombres de Dominio) funciona como la gran guía telefónica de internet. Su función principal es traducir nombres fáciles de recordar para los humanos (como <code>wikipedia.org</code>) a direcciones IP numéricas que entienden los ordenadores y routers (como <code>198.35.26.96</code>).</p>
+                </div>
+
+                <div class="card-clave">
+                    <h4>2. ¿Por qué usamos nombres y no IPs?</h4>
+                    <p>Los ordenadores se comunican exclusivamente mediante números IP (IPv4 como <code>142.250.184.46</code> o IPv6). Sin embargo, para los seres humanos recordar secuencias numéricas para cada página web sería prácticamente imposible. Los nombres de dominio nos permiten navegar de forma intuitiva.</p>
+                </div>
+
+                <div class="card-clave">
+                    <h4>3. El recorrido para encontrar la IP</h4>
+                    <p>Cuando escribes una URL, el sistema sigue una jerarquía de consultas:</p>
+                    <ol style="font-size: 0.95rem;">
+                        <li><strong>Caché local:</strong> El navegador y el sistema operativo revisan si ya la buscaron antes.</li>
+                        <li><strong>Servidor DNS del Proveedor (ISP):</strong> Si no está en caché, pregunta a tu operadora.</li>
+                        <li><strong>Servidores Raíz (.):</strong> Dirigen al servidor TLD correspondiente.</li>
+                        <li><strong>Servidores TLD (.org, .com):</strong> Apuntan al servidor autoritativo del dominio.</li>
+                        <li><strong>Servidor Autoritativo:</strong> Da la IP final exacta.</li>
+                    </ol>
+                </div>
+
+                <div class="card-clave">
+                    <h4>4. ¿Qué ocurre al obtener la IP?</h4>
+                    <p>Una vez que el ordenador recibe la dirección IP numérica, se establece una conexión directa mediante el protocolo TCP (y seguridad TLS/HTTPS). El navegador envía una petición HTTP al servidor remoto, el cual responde devolviendo el código HTML, imágenes y estilos que forman la página web.</p>
+                </div>
+
+                <div class="card-clave">
+                    <h4>5. Caché DNS y el TTL</h4>
+                    <p>Para no repetir todo el proceso de búsqueda cada vez que haces clic en un enlace, tu ordenador y los servidores intermedios guardan temporalmente los resultados en una <strong>Caché DNS</strong>. El <strong>TTL</strong> (<i>Time To Live</i>) es el tiempo en segundos que esa información se considera válida antes de volver a consultarse.</p>
+                </div>
+
+                <div class="card-clave">
+                    <h4>6. ¿Una o varias IPs por web?</h4>
+                    <p>Una página web moderna no suele tener una única IP. Debido al enorme tráfico, plataformas como YouTube o Amazon utilizan múltiples IPs y redes de distribución de contenido (CDN) repartidas por todo el mundo para balancear la carga y ofrecer la máxima velocidad según tu ubicación geográfica.</p>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Investigación Real -->
+        <section>
+            <h2>🔍 Investigación Real de Servicios</h2>
+            <p>Utilizando herramientas de red como <code>nslookup</code> o consultas especializadas, hemos investigado las direcciones IP asociadas a algunos de los servicios más populares de internet:</p>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>Servicio</th>
+                        <th>Dominio Principal</th>
+                        <th>Ejemplo de IP Asociada</th>
+                        <th>Observaciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Wikipedia</strong></td>
+                        <td><code>wikipedia.org</code></td>
+                        <td><code>198.35.26.96</code></td>
+                        <td>Gestionado por Wikimedia Foundation mediante servidores distribuidos.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>YouTube</strong></td>
+                        <td><code>youtube.com</code></td>
+                        <td><code>142.250.184.46</code></td>
+                        <td>Infraestructura global de Google con múltiples nodos dinámicos.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Instagram</strong></td>
+                        <td><code>instagram.com</code></td>
+                        <td><code>157.240.229.174</code></td>
+                        <td>Pertenece a la red de servidores de Meta (Facebook).</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Amazon</strong></td>
+                        <td><code>amazon.es</code></td>
+                        <td><code>178.236.6.245</code></td>
+                        <td>Usa servidores propios combinados con su nube AWS (Amazon Web Services).</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Simulador Interactivo DNS -->
+        <section>
+            <h2>⚡ Simulador Interactivo del Viaje DNS</h2>
+            <p>Introduce un dominio web y pulsa simular para ver en tiempo real cómo viaja la petición por la red:</p>
+            
+            <div class="simulator-box">
+                <h3>Consola de Resolución DNS</h3>
+                <div class="sim-input-group">
+                    <input type="text" id="domainInput" value="www.ejemplo.edu" placeholder="Escribe un dominio...">
+                    <button onclick="iniciarSimulacion()">Simular Viaje</button>
+                </div>
+                <div id="sim-steps">
+                    <span style="color: #94a3b8;">// Esperando orden de consulta... Introduce un dominio y pulsa simular.</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Guía GitHub Pages -->
+        <section>
+            <h2>🚀 Publicación en GitHub Pages</h2>
+            <p>Este sitio web ha sido diseñado en equipo y publicado de forma totalmente abierta utilizando <strong>GitHub Pages</strong>. Los pasos que hemos seguido para lograrlo son:</p>
+            <ol>
+                <li>Crear un repositorio público en GitHub con el código fuente en formato HTML y CSS.</li>
+                <li>Acceder a la pestaña <em>Settings</em> (Configuración) del repositorio.</li>
+                <li>Navegar hasta la sección <em>Pages</em> en el menú lateral.</li>
+                <li>Seleccionar la rama principal (<i>main / root</i>) como origen de despliegue y guardar.</li>
+                <li>Obtener el enlace web público generado automáticamente por GitHub para compartir el proyecto.</li>
+            </ol>
+        </section>
+
+    </div>
+
+    <footer>
+        <p>Proyecto Escolar de Tecnología y Digitalización · Realizado en pareja para 4º de la ESO.</p>
+    </footer>
+
+    <script>
+        function iniciarSimulacion() {
+            const domain = document.getElementById('domainInput').value.trim() || "miweb.com";
+            const container = document.getElementById('sim-steps');
+            container.innerHTML = "";
+
+            const pasos = [
+                `[1/5] 🌐 Navegador: Buscando '${domain}' en la caché local del sistema operativo... No encontrado.`,
+                `[2/5] 📡 Red: Consultando al Servidor DNS Recursivo del Proveedor de Internet (ISP)...`,
+                `[3/5] 🌍 Servidor Raíz (.): Redirigiendo la petición hacia el servidor TLD correspondiente...`,
+                `[4/5] 📂 Servidor TLD (.com / .org): Identificando y contactando al Servidor Autoritativo del dominio...`,
+                `[5/5] ✅ ¡IP encontrada! Dirección IP obtenida con éxito (Ej: 192.0.2.45). Estableciendo conexión TCP/TLS y cargando la página web.`
+            ];
+
+            pasos.forEach((texto, index) => {
+                setTimeout(() => {
+                    const div = document.createElement('div');
+                    div.className = 'step-item';
+                    div.style.color = index === 4 ? '#4ade80' : '#38bdf8';
+                    div.textContent = texto;
+                    container.appendChild(div);
+                }, index * 700);
+            });
+        }
+    </script>
+</body>
+</html>
